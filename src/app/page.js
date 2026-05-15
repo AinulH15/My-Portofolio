@@ -388,7 +388,7 @@ export default function Home() {
             {[...Array(5)].map((_, i) => (<div key={i} className="w-1 h-1 bg-[#E99B9B] rounded-full"></div>))}
           </div>
           <p className="text-[9px] md:text-[10px] text-white/50 font-mono-pixel tracking-wide">
-            © 2024 AINUL HIDAYAH — ALL RIGHTS RESERVED
+            © 2026 AINUL HIDAYAH — ALL RIGHTS RESERVED
           </p>
         </div>
       </footer>
