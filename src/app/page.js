@@ -39,22 +39,22 @@ export default function Home() {
     {
       id: 1,
       title: 'Medipulse',
-      image: '/asset/medipulse.png',
+      image: '/asset/Medipulse.png',
       role: 'UI/UX Designer',
       year: '2024',
       description: 'Medipulse is a medication reminder website interface designed with a clean and user-friendly approach to help users manage medication schedules and monitor daily health activities.',
       tags: ['Figma', 'UI/UX Design', 'Healthcare', 'Responsive Design'],
       type: 'medipulse',
       hasTabs: true,
-      wireframeImages: Array.from({ length: 27 }, (_, i) => `/asset/wireframe/${i + 1}.png`),
-      mockupImages: Array.from({ length: 23 }, (_, i) => `/asset/medipulse${i + 1}.png`),
-      implementationImages: Array.from({ length: 22 }, (_, i) => `/asset/implementasi/${i + 1}.png`)
+      wireframeImages: Array.from({ length: 27 }, (_, i) => `/asset/Wireframe/${i + 1}.png`),
+      mockupImages: Array.from({ length: 23 }, (_, i) => `/asset/Medipulse${i + 1}.png`),
+      implementationImages: Array.from({ length: 22 }, (_, i) => `/asset/Implementasi/${i + 1}.png`)
     },
     {
       id: 2,
       title: 'PADI',
       subtitle: 'Pencarian Arsip dan Dokumen Informasi',
-      image: '/asset/padi.png',
+      image: '/asset/Padi.png',
       role: 'Fullstack Developer',
       year: '2025',
       description: 'Web-based land book search system designed to simplify document searching and borrowing processes.',
@@ -66,7 +66,7 @@ export default function Home() {
     {
       id: 3,
       title: 'Jokkaki',
-      image: '/asset/jokkaki.png',
+      image: '/asset/Jokkaki.png',
       role: 'Fullstack Developer',
       year: '2025',
       description: 'Interactive tourism polling website that allows users to vote for tourist destinations and view polling results.',
@@ -265,10 +265,10 @@ export default function Home() {
                   { name: 'Figma', icon: '/asset/figma.png' },
                   { name: 'Git', icon: '/asset/git.png' },
                   { name: 'HTML', icon: '/asset/html.png' },
-                  { name: 'Java', icon: '/asset/java.png' },
+                  { name: 'Java', icon: '/asset/Java.png' },
                   { name: 'JavaScript', icon: '/asset/js.webp' },
                   { name: 'Next.js', icon: '/asset/nextjs.png' },
-                  { name: 'PHP', icon: '/asset/php.png' }
+                  { name: 'PHP', icon: '/asset/PHP.png' }
                 ].map((skill, idx) => (
                   <div key={idx} className="group bg-white rounded-xl p-3 md:p-4 text-center shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-[#F0E8DC] hover:border-[#E99B9B] cursor-pointer">
                     <div className="w-10 h-10 md:w-12 md:h-12 mx-auto mb-2 flex items-center justify-center">
