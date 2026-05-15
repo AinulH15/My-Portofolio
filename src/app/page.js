@@ -158,7 +158,7 @@ export default function Home() {
                     
                     <div className="pt-2">
                       <a 
-                        href="/asset/CV ATS Ainul Hidayah.pdf" 
+                        href="/asset/Ainul CV.pdf" 
                         download
                         className="inline-flex items-center gap-2 px-4 py-2 border-2 border-[#E99B9B] text-[#E99B9B] rounded-full hover:bg-[#E99B9B] hover:text-white transition-all duration-300 font-bold text-xs md:text-sm font-mono-pixel"
                       >
