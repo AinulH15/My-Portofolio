@@ -17,9 +17,9 @@ export default function Navbar() {
     <nav className="bg-black text-white fixed w-full top-0 z-50 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <div className="text-xl font-bold">
-            My<span className="text-[#E99B9B]">Portfolio</span>
+          {/* Logo dengan font pixel */}
+          <div className="text-xl font-bold font-mono-pixel tracking-tight">
+            My<span className="text-[#E99B9B]">Portofolio</span>
           </div>
 
           {/* Desktop Menu */}
@@ -28,12 +28,11 @@ export default function Navbar() {
               <a
                 key={link.name}
                 href={link.href}
-                className="relative group py-2"
+                className="relative group py-2 font-mono-pixel text-sm tracking-wide"
               >
                 <span className="hover:text-[#E99B9B] transition-colors duration-300">
                   {link.name}
                 </span>
-                {/* Garis bawah pink saat hover */}
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#E99B9B] transition-all duration-300 group-hover:w-full"></span>
               </a>
             ))}
@@ -76,7 +75,7 @@ export default function Navbar() {
               <a
                 key={link.name}
                 href={link.href}
-                className="block py-2 hover:text-[#E99B9B] transition-colors duration-300 border-b border-transparent hover:border-[#E99B9B]"
+                className="block py-2 hover:text-[#E99B9B] transition-colors duration-300 border-b border-transparent hover:border-[#E99B9B] font-mono-pixel text-sm tracking-wide"
                 onClick={() => setIsMenuOpen(false)}
               >
                 {link.name}
