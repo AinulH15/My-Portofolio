@@ -262,7 +262,7 @@ export default function Home() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                 {[
                   { name: 'CSS', icon: '/asset/css.svg' },
-                  { name: 'Figma', icon: '/asset/figma.png' },
+                  { name: 'Figma', icon: '/asset/Figma.png' },
                   { name: 'Git', icon: '/asset/git.png' },
                   { name: 'HTML', icon: '/asset/html.png' },
                   { name: 'Java', icon: '/asset/Java.png' },
