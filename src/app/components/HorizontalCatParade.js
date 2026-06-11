@@ -25,7 +25,7 @@ const catColors = {
   uiux: { body: COLORS.peach, dark: '#E5B99E', light: '#FFE0CC', ear: '#E5B99E' }
 }
 
-// Deteksi apakah perangkat mobile
+// Deteksi perangkat mobile
 const isMobile = () => {
   if (typeof window === 'undefined') return false
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768
@@ -89,10 +89,10 @@ const WalkingCat = ({ cat, onClick, isActive, index, isLeader = false, shouldWal
   const [eyeX, setEyeX] = useState(0)
   const [eyeY, setEyeY] = useState(0)
   const catRef = useRef(null)
+  const { t } = useLanguage()  // <-- TAMBAHKAN INI
 
-  // Kecepatan animasi - lebih cepat di mobile
   const mobile = isMobile()
-  const walkInterval = mobile ? 50 : 80  // mobile: 50ms, desktop: 80ms
+  const walkInterval = mobile ? 50 : 80
   const tailSpeed = mobile ? 100 : 150
 
   let colors
@@ -113,7 +113,7 @@ const WalkingCat = ({ cat, onClick, isActive, index, isLeader = false, shouldWal
   const width = 110
   const height = 90
 
-  // Animasi berjalan - kecepatan menyesuaikan device
+  // Animasi berjalan
   useEffect(() => {
     if (!shouldWalk) return
     const interval = setInterval(() => {
@@ -167,21 +167,17 @@ const WalkingCat = ({ cat, onClick, isActive, index, isLeader = false, shouldWal
         style={{ transform: `scale(${scale})`, transformOrigin: 'center center', display: 'inline-block' }}
       >
         <svg width={width} height={height} viewBox="0 0 110 90" className="drop-shadow-md hover:scale-105 transition-transform">
-          {/* EKOR */}
           <path d="M90 38 Q98 32 95 22 Q93 18 91 19 Q89 20 90 25 Q91 30 87 40" 
                 stroke={colors.dark} strokeWidth="3" fill="none" strokeLinecap="round"/>
           <circle cx="92" cy="20" r="2.5" fill={colors.body} stroke={colors.dark} strokeWidth="1"/>
           
-          {/* BADAN */}
           <rect x="20" y="45" width="70" height="30" rx="9" fill={colors.body} stroke={colors.dark} strokeWidth="2"/>
           <rect x="28" y="50" width="54" height="18" rx="5" fill={colors.light} stroke={colors.dark} strokeWidth="1"/>
           
-          {/* TULISAN DI BADAN */}
           <text x="55" y="62" textAnchor="middle" fontSize={isLeader ? 9 : 7} fontWeight="bold" fill={COLORS.dark} fontFamily="'Space Mono', monospace">
             {isLeader ? 'SKILL' : cat.name}
           </text>
           
-          {/* KAKI */}
           <g transform={`translate(${walkCycle < 2 && shouldWalk ? legOffset : 0}, 0)`}>
             <rect x="64" y="71" width="10" height="8" rx="4" fill={colors.body} stroke={colors.dark} strokeWidth="1.5"/>
             <rect x="66" y="76" width="5" height="3" rx="1.5" fill={colors.dark}/>
@@ -199,16 +195,13 @@ const WalkingCat = ({ cat, onClick, isActive, index, isLeader = false, shouldWal
             <rect x="18" y="76" width="4" height="3" rx="1.5" fill={colors.dark}/>
           </g>
           
-          {/* KEPALA */}
           <circle cx="16" cy="37" r="16" fill={colors.body} stroke={colors.dark} strokeWidth="2"/>
           
-          {/* TELINGA */}
           <polygon points="4,25 -2,10 10,20" fill={colors.body} stroke={colors.dark} strokeWidth="2" strokeLinejoin="round"/>
           <polygon points="5,24 0,16 9,21" fill={colors.ear} stroke={colors.dark} strokeWidth="1"/>
           <polygon points="26,25 32,10 22,20" fill={colors.body} stroke={colors.dark} strokeWidth="2" strokeLinejoin="round"/>
           <polygon points="25,24 29,16 21,21" fill={colors.ear} stroke={colors.dark} strokeWidth="1"/>
           
-          {/* MATA */}
           <g transform="translate(8, 33)">
             <circle cx="0" cy="0" r="4.5" fill="white" stroke={colors.dark} strokeWidth="1.5"/>
             <circle cx={eyeX} cy={eyeY} r="2" fill={COLORS.dark}/>
@@ -220,7 +213,6 @@ const WalkingCat = ({ cat, onClick, isActive, index, isLeader = false, shouldWal
             <circle cx={eyeX + 0.8} cy={eyeY - 0.8} r="0.6" fill="white"/>
           </g>
           
-          {/* BLINK */}
           {blink && (
             <>
               <rect x="4" y="31" width="7" height="2.5" rx="1" fill={colors.body} stroke={colors.dark} strokeWidth="0.8"/>
@@ -228,26 +220,20 @@ const WalkingCat = ({ cat, onClick, isActive, index, isLeader = false, shouldWal
             </>
           )}
           
-          {/* HIDUNG */}
           <polygon points="14,40 15.5,42 12.5,42" fill={COLORS.pink} stroke={colors.dark} strokeWidth="0.8"/>
-          
-          {/* MULUT */}
           <path d="M14 42 Q14 44 12 44" stroke={colors.dark} strokeWidth="0.8" fill="none"/>
           <path d="M14 42 Q14 44 16 44" stroke={colors.dark} strokeWidth="0.8" fill="none"/>
           
-          {/* KUMIS */}
           <line x1="2" y1="38" x2="-4" y2="36" stroke={colors.dark} strokeWidth="0.7"/>
           <line x1="2" y1="40" x2="-4" y2="39" stroke={colors.dark} strokeWidth="0.7"/>
           <line x1="27" y1="38" x2="33" y2="36" stroke={colors.dark} strokeWidth="0.7"/>
           <line x1="27" y1="40" x2="33" y2="39" stroke={colors.dark} strokeWidth="0.7"/>
           
-          {/* BLUSH */}
           <circle cx="4" cy="40" r="2" fill={COLORS.pink} opacity="0.35"/>
           <circle cx="24" cy="40" r="2" fill={COLORS.pink} opacity="0.35"/>
         </svg>
       </motion.div>
       
-      {/* Bubble "Click for details" */}
       {isLeader && !isActive && (
         <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white border-2 rounded-full px-2 py-0.5 shadow-md animate-bounce whitespace-nowrap z-20" style={{ borderColor: COLORS.lavender }}>
           <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-white border-b-2 border-r-2 rotate-45" style={{ borderColor: COLORS.lavender }}></div>
@@ -355,7 +341,7 @@ export default function HorizontalCatParade({ sectionId }) {
   
   const paradeCats = getCatData(t)
   const mobile = isMobile()
-  const horizontalSpeed = mobile ? 2.0 : 1.2  // mobile lebih cepat: 2.0, desktop: 1.2
+  const horizontalSpeed = mobile ? 2.0 : 1.2
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -369,7 +355,6 @@ export default function HorizontalCatParade({ sectionId }) {
     return () => observer.disconnect()
   }, [])
 
-  // Animasi berjalan horizontal - kecepatan menyesuaikan device
   useEffect(() => {
     if (!isVisible) return
     let animationId

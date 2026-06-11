@@ -123,7 +123,7 @@ export default function Home() {
         {
           id: 3,
           title: 'Jokkaki',
-          image: '/asset/jokkaki.png',
+          image: '/asset/Jokkaki.png',
           role: 'Fullstack Developer',
           year: '2025',
           techStack: ['PHP', 'JavaScript', 'MySQL', 'HTML', 'CSS'],
