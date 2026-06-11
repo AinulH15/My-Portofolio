@@ -1,39 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Animasi border berjalan */
-@keyframes border-run {
-  0% {
-    border-image-source: linear-gradient(0deg, #E99B9B, #ffb6b6);
-    border-image-slice: 1;
-  }
-  25% {
-    border-image-source: linear-gradient(90deg, #E99B9B, #ffb6b6);
-    border-image-slice: 1;
-  }
-  50% {
-    border-image-source: linear-gradient(180deg, #E99B9B, #ffb6b6);
-    border-image-slice: 1;
-  }
-  75% {
-    border-image-source: linear-gradient(270deg, #E99B9B, #ffb6b6);
-    border-image-slice: 1;
-  }
-  100% {
-    border-image-source: linear-gradient(360deg, #E99B9B, #ffb6b6);
-    border-image-slice: 1;
-  }
-}
-
-.animated-border {
-  border: 3px solid transparent;
-  border-radius: 20px;
-  animation: border-run 3s linear infinite;
-  background: white;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+* {
+  font-family: 'Space Mono', monospace;
 }
 
 html {
   scroll-behavior: smooth;
+}
+
+/* Custom scrollbar - retro style */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FFF8E7;
+  border-left: 1px solid #E99B9B;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #E99B9B;
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d48484;
+}
+
+/* Pixelated border effect */
+.pixel-border {
+  box-shadow: 4px 4px 0 0 #1A1A1A;
+}
+
+/* Floating animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Soft blink */
+@keyframes softBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Hide scrollbar on cat parade container */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
