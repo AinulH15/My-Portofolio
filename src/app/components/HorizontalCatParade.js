@@ -25,7 +25,13 @@ const catColors = {
   uiux: { body: COLORS.peach, dark: '#E5B99E', light: '#FFE0CC', ear: '#E5B99E' }
 }
 
-// Data kucing dengan terjemahan
+// Deteksi apakah perangkat mobile
+const isMobile = () => {
+  if (typeof window === 'undefined') return false
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768
+}
+
+// Data kucing
 const getCatData = (t) => [
   { id: 0, name: 'SKILL', isLeader: true, skills: null, projects: null, description: null },
   { id: 1, name: 'Front-end', 
@@ -82,9 +88,12 @@ const WalkingCat = ({ cat, onClick, isActive, index, isLeader = false, shouldWal
   const [tailAngle, setTailAngle] = useState(0)
   const [eyeX, setEyeX] = useState(0)
   const [eyeY, setEyeY] = useState(0)
-  const audioRef = useRef(null)
   const catRef = useRef(null)
-  const { language, t } = useLanguage()
+
+  // Kecepatan animasi - lebih cepat di mobile
+  const mobile = isMobile()
+  const walkInterval = mobile ? 50 : 80  // mobile: 50ms, desktop: 80ms
+  const tailSpeed = mobile ? 100 : 150
 
   let colors
   if (isLeader) {
@@ -104,20 +113,15 @@ const WalkingCat = ({ cat, onClick, isActive, index, isLeader = false, shouldWal
   const width = 110
   const height = 90
 
-  useEffect(() => {
-    audioRef.current = new Audio('/asset/sounds/meow.mp3')
-    audioRef.current.volume = 0.2
-  }, [])
-
-  // Animasi berjalan
+  // Animasi berjalan - kecepatan menyesuaikan device
   useEffect(() => {
     if (!shouldWalk) return
     const interval = setInterval(() => {
       setWalkCycle(prev => (prev + 1) % 4)
-      setTailAngle(prev => Math.sin(Date.now() / 200) * 12)
-    }, 130)
+      setTailAngle(prev => Math.sin(Date.now() / tailSpeed) * 15)
+    }, walkInterval)
     return () => clearInterval(interval)
-  }, [shouldWalk])
+  }, [shouldWalk, walkInterval, tailSpeed])
 
   // Random blink
   useEffect(() => {
@@ -150,20 +154,16 @@ const WalkingCat = ({ cat, onClick, isActive, index, isLeader = false, shouldWal
 
   const handleClick = (e) => {
     e.stopPropagation()
-    if (audioRef.current) {
-      audioRef.current.currentTime = 0
-      audioRef.current.play().catch(e => console.log(e))
-    }
     if (onClick) onClick(cat)
   }
 
-  const legOffset = walkCycle < 2 ? 2 : -2
+  const legOffset = walkCycle < 2 ? 3 : -3
 
   return (
     <div ref={catRef} className="relative inline-block cursor-pointer group" onClick={handleClick}>
       <motion.div
-        animate={shouldWalk ? { y: [0, -1.5, 0, -1, 0] } : { y: 0 }}
-        transition={{ duration: 0.35, repeat: shouldWalk ? Infinity : 0 }}
+        animate={shouldWalk ? { y: [0, -2, 0, -1, 0] } : { y: 0 }}
+        transition={{ duration: mobile ? 0.2 : 0.25, repeat: shouldWalk ? Infinity : 0 }}
         style={{ transform: `scale(${scale})`, transformOrigin: 'center center', display: 'inline-block' }}
       >
         <svg width={width} height={height} viewBox="0 0 110 90" className="drop-shadow-md hover:scale-105 transition-transform">
@@ -247,7 +247,7 @@ const WalkingCat = ({ cat, onClick, isActive, index, isLeader = false, shouldWal
         </svg>
       </motion.div>
       
-      {/* Bubble "Click for details" untuk kucing SKILL */}
+      {/* Bubble "Click for details" */}
       {isLeader && !isActive && (
         <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white border-2 rounded-full px-2 py-0.5 shadow-md animate-bounce whitespace-nowrap z-20" style={{ borderColor: COLORS.lavender }}>
           <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-white border-b-2 border-r-2 rotate-45" style={{ borderColor: COLORS.lavender }}></div>
@@ -270,33 +270,30 @@ const GlobalPopup = ({ cat, onClose }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm"
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
       onClick={onClose}
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 30 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.9, y: 30 }}
-        className="relative w-80 md:w-96 bg-white border-4 rounded-2xl shadow-2xl"
+        className="relative w-[95%] max-w-md bg-white border-4 rounded-2xl shadow-2xl mt-14"
         style={{ borderColor: COLORS.pink }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Kucing di atas popup */}
-        <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 flex gap-3">
-          <div className="bg-white rounded-full p-1 shadow-md border-2" style={{ borderColor: COLORS.pink }}>
+        <div className="absolute -top-14 left-1/2 transform -translate-x-1/2 flex gap-4 z-20">
+          <div className="bg-white rounded-full p-2 shadow-md border-2" style={{ borderColor: COLORS.pink }}>
             <MiniCat color={COLORS.pink} />
           </div>
-          <div className="bg-white rounded-full p-1 shadow-md border-2" style={{ borderColor: COLORS.lavender }}>
+          <div className="bg-white rounded-full p-2 shadow-md border-2" style={{ borderColor: COLORS.lavender }}>
             <MiniCat color={COLORS.lavender} />
           </div>
         </div>
         
-        {/* Telinga popup */}
-        <div className="absolute -top-2 left-5 w-4 h-3 rounded-t-full" style={{ backgroundColor: COLORS.pink, border: `2px solid ${COLORS.dark}` }}></div>
-        <div className="absolute -top-2 right-5 w-4 h-3 rounded-t-full" style={{ backgroundColor: COLORS.pink, border: `2px solid ${COLORS.dark}` }}></div>
+        <div className="absolute -top-2 left-6 w-5 h-3 rounded-t-full" style={{ backgroundColor: COLORS.pink, border: `2px solid ${COLORS.dark}` }}></div>
+        <div className="absolute -top-2 right-6 w-5 h-3 rounded-t-full" style={{ backgroundColor: COLORS.pink, border: `2px solid ${COLORS.dark}` }}></div>
         
-        {/* Header */}
-        <div className="p-4 rounded-t-xl" style={{ backgroundColor: COLORS.pink }}>
+        <div className="pt-10 pb-4 px-5 rounded-t-xl" style={{ backgroundColor: COLORS.pink }}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <MiniCat color="white" />
@@ -306,36 +303,34 @@ const GlobalPopup = ({ cat, onClose }) => {
           </div>
         </div>
         
-        {/* Body */}
-        <div className="p-5 max-h-[60vh] overflow-y-auto">
-          <div className="mb-5">
-            <p className="text-xs font-black mb-3 font-mono-pixel" style={{ color: COLORS.sage }}>✦ {t.popup.skills.toUpperCase()} ✦</p>
-            <div className="flex flex-wrap gap-2">
+        <div className="p-5 max-h-[55vh] overflow-y-auto">
+          <div className="mb-4">
+            <p className="text-[11px] font-black mb-2 font-mono-pixel" style={{ color: COLORS.sage }}>✦ {t.popup.skills.toUpperCase()} ✦</p>
+            <div className="flex flex-wrap gap-1.5">
               {cat.skills.map((s, i) => (
-                <span key={i} className="px-3 py-1.5 text-xs font-mono-pixel rounded-full" style={{ backgroundColor: `${COLORS.pink}20`, color: COLORS.dark }}>
+                <span key={i} className="px-2.5 py-1 text-[10px] font-mono-pixel rounded-full" style={{ backgroundColor: `${COLORS.pink}20`, color: COLORS.dark }}>
                   {s}
                 </span>
               ))}
             </div>
           </div>
           
-          <div className="mb-5">
-            <p className="text-xs font-black mb-3 font-mono-pixel" style={{ color: COLORS.sage }}>✦ {t.popup.projects.toUpperCase()} ✦</p>
-            <div className="flex flex-wrap gap-2">
+          <div className="mb-4">
+            <p className="text-[11px] font-black mb-2 font-mono-pixel" style={{ color: COLORS.sage }}>✦ {t.popup.projects.toUpperCase()} ✦</p>
+            <div className="flex flex-wrap gap-1.5">
               {cat.projects.map((p, i) => (
-                <span key={i} className="px-3 py-1.5 text-xs font-mono-pixel font-bold rounded-full" style={{ backgroundColor: COLORS.mint, color: COLORS.dark }}>
+                <span key={i} className="px-2.5 py-1 text-[10px] font-mono-pixel font-bold rounded-full" style={{ backgroundColor: COLORS.mint, color: COLORS.dark }}>
                   ✓ {p}
                 </span>
               ))}
             </div>
           </div>
           
-          <p className="text-sm leading-relaxed font-mono-pixel pt-3" style={{ color: COLORS.dark, borderTop: `2px solid ${COLORS.mint}` }}>
+          <p className="text-xs leading-relaxed font-mono-pixel pt-2" style={{ color: COLORS.dark, borderTop: `1.5px solid ${COLORS.mint}` }}>
             {description}
           </p>
         </div>
         
-        {/* Footer */}
         <div className="p-3 rounded-b-xl flex justify-between items-center" style={{ backgroundColor: COLORS.mint, borderTop: `2px solid ${COLORS.pink}` }}>
           <div className="flex items-center gap-2">
             <MiniCat color={COLORS.mint} />
@@ -359,6 +354,8 @@ export default function HorizontalCatParade({ sectionId }) {
   const { t } = useLanguage()
   
   const paradeCats = getCatData(t)
+  const mobile = isMobile()
+  const horizontalSpeed = mobile ? 2.0 : 1.2  // mobile lebih cepat: 2.0, desktop: 1.2
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -372,14 +369,13 @@ export default function HorizontalCatParade({ sectionId }) {
     return () => observer.disconnect()
   }, [])
 
-  // Animasi berjalan horizontal
+  // Animasi berjalan horizontal - kecepatan menyesuaikan device
   useEffect(() => {
     if (!isVisible) return
     let animationId
     let currentPos = 0
-    const speed = 1
     const animate = () => {
-      currentPos = (currentPos + speed) % (paradeCats.length * 120)
+      currentPos = (currentPos + horizontalSpeed) % (paradeCats.length * 120)
       if (containerRef.current) {
         containerRef.current.style.transform = `translateX(${-currentPos}px)`
       }
@@ -387,7 +383,7 @@ export default function HorizontalCatParade({ sectionId }) {
     }
     animationId = requestAnimationFrame(animate)
     return () => cancelAnimationFrame(animationId)
-  }, [isVisible, paradeCats.length])
+  }, [isVisible, paradeCats.length, horizontalSpeed])
 
   return (
     <div ref={sectionRef} className="w-full overflow-hidden py-4 md:py-6">
@@ -432,7 +428,6 @@ export default function HorizontalCatParade({ sectionId }) {
         )}
       </AnimatePresence>
       
-      {/* Global Popup Skill */}
       <AnimatePresence>
         {activeCat && !activeCat.isLeader && (
           <GlobalPopup cat={activeCat} onClose={() => setActiveCat(null)} />
