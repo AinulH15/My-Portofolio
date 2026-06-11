@@ -45,7 +45,7 @@ export default function Home() {
         {
           id: 1,
           title: 'Medipulse',
-          image: '/asset/medipulse.png',
+          image: '/asset/Medipulse.png',
           role: 'UI/UX Designer',
           year: '2024',
           techStack: ['Figma', 'UI/UX Design', 'Prototyping'],
@@ -54,15 +54,15 @@ export default function Home() {
           tags: ['Figma', 'UI/UX Design', 'Healthcare', 'Responsive Design'],
           type: 'medipulse',
           hasTabs: true,
-          wireframeImages: Array.from({ length: 27 }, (_, i) => `/asset/wireframe/${i + 1}.png`),
-          mockupImages: Array.from({ length: 23 }, (_, i) => `/asset/medipulse${i + 1}.png`),
-          implementationImages: Array.from({ length: 22 }, (_, i) => `/asset/implementasi/${i + 1}.png`)
+          wireframeImages: Array.from({ length: 27 }, (_, i) => `/asset/Wireframe/${i + 1}.png`),
+          mockupImages: Array.from({ length: 23 }, (_, i) => `/asset/Medipulse${i + 1}.png`),
+          implementationImages: Array.from({ length: 22 }, (_, i) => `/asset/Implementasi/${i + 1}.png`)
         },
         {
           id: 2,
           title: 'PADI',
           subtitle: 'Pencarian Arsip dan Dokumen Informasi',
-          image: '/asset/padi.png',
+          image: '/asset/Padi.png',
           role: 'Fullstack Developer',
           year: '2025',
           techStack: ['Java', 'Spring Boot', 'MySQL', 'HTML', 'CSS', 'JavaScript'],

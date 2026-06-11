@@ -377,7 +377,7 @@ export default function HorizontalCatParade({ sectionId }) {
     if (!isVisible) return
     let animationId
     let currentPos = 0
-    const speed = 0.45
+    const speed = 1
     const animate = () => {
       currentPos = (currentPos + speed) % (paradeCats.length * 120)
       if (containerRef.current) {
@@ -399,7 +399,7 @@ export default function HorizontalCatParade({ sectionId }) {
             className="relative"
           >
             <div className="text-center mb-2">
-              <p className="text-[9px] font-mono-pixel animate-pulse" style={{ color: COLORS.sage }}>{t.skills.subtitle}</p>
+              <p className="text-[9px] font-mono-pixel animate-pulse" style={{ color: '#1A1A1D' }}>{t.skills.subtitle}</p>
             </div>
             
             <div className="relative overflow-hidden py-2">
@@ -426,7 +426,7 @@ export default function HorizontalCatParade({ sectionId }) {
             </div>
             
             <div className="text-center mt-2">
-              <p className="text-[7px] font-mono-pixel" style={{ color: COLORS.sage }}>{t.skills.walking}</p>
+              <p className="text-[7px] font-mono-pixel" style={{ color: '#1A1A1D' }}>{t.skills.walking}</p>
             </div>
           </motion.div>
         )}
