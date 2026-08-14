@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useLanguage } from '@/context/LanguageContext'
+import CertificateSection from './components/CertificateSection'
 
 export default function Home() {
   const { language, t } = useLanguage()
@@ -351,6 +352,11 @@ export default function Home() {
 
           {/* PARADE KUCING - PROJECTS */}
           <HorizontalCatParade sectionId="projects" />
+          {/* ============ CERTIFICATES SECTION ============ */}
+          <CertificateSection />
+
+          {/* PARADE KUCING - CERTIFICATES SECTION */}
+          <HorizontalCatParade sectionId="certificates" />
 
           {/* ============ CONTACT SECTION ============ */}
           <motion.section 

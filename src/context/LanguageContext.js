@@ -53,6 +53,14 @@ export const translations = {
       clickToView: "✦ Click Wireframe, Mockup, or Implementation to view images ✦"
     },
     
+    // Certificates
+    certificates: {
+      title: 'Certificates & Achievements',
+      subtitle: 'Continuous learning, certifications, and milestones throughout my journey.',
+      all: 'All',
+      view: 'View Details'
+    },  // <-- KOMA HARUS ADA DI SINI
+
     // Contact
     contact: {
       title: "Let's Build Something Together",
@@ -130,6 +138,14 @@ export const translations = {
       clickToView: "✦ Klik Wireframe, Mockup, atau Implementation untuk melihat gambar ✦"
     },
     
+    // Certificates
+    certificates: {
+      title: 'Sertifikat & Penghargaan',
+      subtitle: 'Pembelajaran berkelanjutan, sertifikasi, dan pencapaian sepanjang perjalanan saya.',
+      all: 'Semua',
+      view: 'Lihat Detail'
+    },  // <-- KOMA HARUS ADA DI SINI
+
     // Contact
     contact: {
       title: "Mari Membangun Sesuatu Bersama",
