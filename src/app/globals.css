@@ -1,63 +1,87 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Inter:wght@300;400;500;600;700&family=Caveat:wght@400;600&family=Space+Mono:wght@400;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-* {
-  font-family: 'Space Mono', monospace;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    background-color: #FAF6F0;
+    color: #251B37;
+  }
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
-/* Custom scrollbar - retro style */
+/* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #FFF8E7;
-  border-left: 1px solid #E99B9B;
+  background: #FAF6F0;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #E99B9B;
-  border-radius: 0;
+  background: #FFCACA;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #d48484;
+  background: #E8B0B0;
 }
 
-/* Pixelated border effect */
-.pixel-border {
-  box-shadow: 4px 4px 0 0 #1A1A1A;
+/* Hanging thread line animation */
+.thread-line {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: drawThread 1.5s ease-in-out forwards;
 }
 
-/* Floating animation */
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+@keyframes drawThread {
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
-.animate-float {
-  animation: float 3s ease-in-out infinite;
+/* Paper clip style */
+.paper-clip {
+  position: relative;
 }
 
-/* Soft blink */
-@keyframes softBlink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+.paper-clip::before {
+  content: '📎';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
 }
 
-/* Hide scrollbar on cat parade container */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+/* Pin style */
+.pin {
+  position: relative;
 }
 
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+.pin::before {
+  content: '📍';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 14px;
+}
+
+/* Hanging card base */
+.hanging-card {
+  @apply bg-white rounded-xl shadow-lg border border-softPink/20;
+  box-shadow: 0 4px 20px rgba(37, 27, 55, 0.08);
+  transition: all 0.3s ease;
+}
+
+.hanging-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(37, 27, 55, 0.12);
 }

@@ -88,20 +88,15 @@ const achievementsData = [
 
 export default function CertificateSection() {
   const { language } = useLanguage()
-  const [filter, setFilter] = useState('All')
+  const [filter, setFilter] = useState('all')
   const [selectedItem, setSelectedItem] = useState(null)
   
   const allItems = [...certificatesData, ...achievementsData]
   
-  // Filter items - PERBAIKAN: gunakan type.toLowerCase()
-  const filteredItems = filter === 'All' 
+  // FILTER LOGIC - Menggunakan lowercase untuk perbandingan
+  const filteredItems = filter === 'all' 
     ? allItems 
-    : allItems.filter(item => item.type === filter.toLowerCase())
-
-  // Debug: cek data
-  console.log('All items:', allItems)
-  console.log('Filter:', filter)
-  console.log('Filtered items:', filteredItems)
+    : allItems.filter(item => item.type === filter)
 
   const handleItemClick = (item) => {
     setSelectedItem(item)
@@ -111,7 +106,6 @@ export default function CertificateSection() {
     setSelectedItem(null)
   }
 
-  // Teks berdasarkan bahasa
   const texts = {
     title: language === 'en' 
       ? 'Certificates & Achievements' 
@@ -144,9 +138,9 @@ export default function CertificateSection() {
       {/* Filter */}
       <div className="flex justify-center gap-3 mb-10">
         {[
-          { key: 'All', label: texts.all, icon: '📌' },
-          { key: 'Certificates', label: texts.certificates, icon: '📜' },
-          { key: 'Achievements', label: texts.achievements, icon: '🏆' }
+          { key: 'all', label: texts.all, icon: '📌' },
+          { key: 'certificate', label: texts.certificates, icon: '📜' },
+          { key: 'achievement', label: texts.achievements, icon: '🏆' }
         ].map((category) => (
           <button
             key={category.key}
@@ -171,7 +165,7 @@ export default function CertificateSection() {
         ))}
       </div>
 
-      {/* Count badge */}
+      {/* Count */}
       <div className="text-center mb-6">
         <p className="text-[10px] text-[#8B7355] font-mono-pixel">
           {filteredItems.length} {filteredItems.length === 1 ? 'item' : 'items'} found
