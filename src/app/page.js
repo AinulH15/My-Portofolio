@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useLanguage } from '@/context/LanguageContext'
+import ChatBot from './components/ChatBot'
 
 export default function Home() {
   const { language, t } = useLanguage()
@@ -389,6 +390,9 @@ export default function Home() {
 
         </div>
       </main>
+
+       {/* CHATBOT */}
+       <ChatBot />
 
       {/* FOOTER */}
       <motion.footer
