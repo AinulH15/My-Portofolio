@@ -281,10 +281,7 @@ const GlobalPopup = ({ cat, onClose }) => {
         
         <div className="pt-10 pb-4 px-5 rounded-t-xl" style={{ backgroundColor: COLORS.pink }}>
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <MiniCat color="white" />
-              <h3 className="text-lg md:text-xl font-black text-white font-mono-pixel">{cat.name} {t.popup.skills}</h3>
-            </div>
+          <h3 className="text-lg md:text-xl font-black text-white font-mono-pixel">{cat.name} {t.popup.skills}</h3>
             <button onClick={onClose} className="text-white text-2xl hover:text-[#2C2C2C] transition-colors">✕</button>
           </div>
         </div>

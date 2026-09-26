@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useLanguage } from '@/context/LanguageContext'
 import CertificatePopup from './CertificatePopup'
 
-// Data Certificates
 const certificatesData = [
   {
     id: 1,
@@ -60,7 +59,6 @@ const certificatesData = [
   }
 ]
 
-// Data Achievements
 const achievementsData = [
   {
     id: 101,
@@ -87,60 +85,53 @@ const achievementsData = [
 ]
 
 export default function CertificateSection() {
-  const { language } = useLanguage()
+  const { t } = useLanguage()
   const [filter, setFilter] = useState('all')
   const [selectedItem, setSelectedItem] = useState(null)
-  
+
   const allItems = [...certificatesData, ...achievementsData]
-  
-  // FILTER LOGIC - Menggunakan lowercase untuk perbandingan
-  const filteredItems = filter === 'all' 
-    ? allItems 
+
+  const filteredItems = filter === 'all'
+    ? allItems
     : allItems.filter(item => item.type === filter)
-
-  const handleItemClick = (item) => {
-    setSelectedItem(item)
-  }
-
-  const closePopup = () => {
-    setSelectedItem(null)
-  }
-
-  const texts = {
-    title: language === 'en' 
-      ? 'Certificates & Achievements' 
-      : 'Sertifikat & Pencapaian',
-    subtitle: language === 'en' 
-      ? 'Continuous learning, certifications, and milestones throughout my journey.'
-      : 'Pembelajaran berkelanjutan, sertifikasi, dan pencapaian sepanjang perjalanan saya.',
-    all: language === 'en' ? 'All' : 'Semua',
-    certificates: language === 'en' ? 'Certificates' : 'Sertifikat',
-    achievements: language === 'en' ? 'Achievements' : 'Pencapaian',
-    view: language === 'en' ? 'View Details' : 'Lihat Detail'
-  }
 
   return (
     <section id="certificates" className="mt-16 md:mt-24">
-      <div className="text-center mb-8 md:mb-10">
+
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true, margin: "-100px" }}
+        className="text-center mb-8 md:mb-10"
+      >
         <div className="flex items-center justify-center gap-3 mb-2">
           <div className="w-8 md:w-10 h-px bg-[#E99B9B]"></div>
-          <span className="text-[#E99B9B] text-[10px] md:text-xs font-mono-pixel tracking-wide">✦ {texts.title.toUpperCase()} ✦</span>
+          <span className="text-[#E99B9B] text-[10px] md:text-xs font-mono-pixel tracking-wide">
+            ✦ {t.certificates.title.toUpperCase()} ✦
+          </span>
           <div className="w-8 md:w-10 h-px bg-[#E99B9B]"></div>
         </div>
         <h2 className="text-2xl md:text-4xl font-black text-[#2C2C2C] tracking-tight font-mono-pixel">
-          {texts.title}
+          {t.certificates.title}
         </h2>
         <p className="text-[#6B6B6B] text-sm mt-3 font-mono-pixel">
-          {texts.subtitle}
+          {t.certificates.subtitle}
         </p>
-      </div>
+      </motion.div>
 
       {/* Filter */}
-      <div className="flex justify-center gap-3 mb-10">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+        viewport={{ once: true, margin: "-50px" }}
+        className="flex justify-center gap-3 mb-10"
+      >
         {[
-          { key: 'all', label: texts.all, icon: '📌' },
-          { key: 'certificate', label: texts.certificates, icon: '📜' },
-          { key: 'achievement', label: texts.achievements, icon: '🏆' }
+          { key: 'all', label: t.certificates.all },
+          { key: 'certificate', label: t.certificates.certificates },
+          { key: 'achievement', label: t.certificates.achievements }
         ].map((category) => (
           <button
             key={category.key}
@@ -156,47 +147,49 @@ export default function CertificateSection() {
               }
             `}
           >
-            <span className="text-sm">{category.icon}</span>
             {category.label}
             {filter === category.key && (
               <span className="ml-1 text-white/80 text-xs">✦</span>
             )}
           </button>
         ))}
-      </div>
+      </motion.div>
 
-      {/* Count */}
-      <div className="text-center mb-6">
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        viewport={{ once: true }}
+        className="text-center mb-6"
+      >
         <p className="text-[10px] text-[#8B7355] font-mono-pixel">
-          {filteredItems.length} {filteredItems.length === 1 ? 'item' : 'items'} found
+          {filteredItems.length} {filteredItems.length === 1 ? t.certificates.itemFound : t.certificates.found}
         </p>
-      </div>
+      </motion.div>
 
-      {/* Grid Cards */}
+      {/* Cards */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-7">
         {filteredItems.map((item, idx) => (
           <motion.div
             key={item.id}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 60 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: idx * 0.1 }}
-            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: idx * 0.15 }}
+            viewport={{ once: true, margin: "-80px" }}
             className="group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer border border-[#F0E8DC]"
-            onClick={() => handleItemClick(item)}
+            onClick={() => setSelectedItem(item)}
           >
             <div className="h-40 md:h-48 relative overflow-hidden bg-gradient-to-br from-[#F5F0E8] to-[#EDE5D8]">
-              <img 
-                src={item.image} 
+              <img
+                src={item.image}
                 alt={item.title}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 loading="lazy"
               />
               <div className={`absolute top-2 right-2 px-1.5 py-0.5 rounded-md text-[9px] md:text-[10px] font-mono-pixel font-bold shadow-sm ${
-                item.type === 'certificate' 
-                  ? 'bg-[#E99B9B] text-white' 
-                  : 'bg-[#FFDAC1] text-[#2C2C2C]'
+                item.type === 'certificate' ? 'bg-[#E99B9B] text-white' : 'bg-[#FFDAC1] text-[#2C2C2C]'
               }`}>
-                {item.type === 'certificate' ? '📜 Certificate' : '🏆 Achievement'}
+                {item.type === 'certificate' ? t.certificates.certificate : t.certificates.achievement}
               </div>
               <div className="absolute bottom-2 left-2 bg-white/90 backdrop-blur-sm px-1.5 py-0.5 md:px-2 md:py-0.5 rounded-md text-[9px] md:text-[10px] font-mono-pixel text-[#8B7355] shadow-sm">
                 {item.year}
@@ -206,7 +199,7 @@ export default function CertificateSection() {
               <h3 className="text-base md:text-lg font-black text-[#2C2C2C] mb-1 font-mono-pixel line-clamp-2">{item.title}</h3>
               <p className="text-[10px] md:text-xs text-[#8B7355] font-mono-pixel">{item.issuer || item.organization}</p>
               <button className="inline-flex items-center gap-1 text-[#E99B9B] font-bold hover:text-[#d48484] transition-colors group/btn text-[10px] md:text-xs font-mono-pixel mt-3">
-                <span>{texts.view}</span>
+                <span>{t.certificates.view}</span>
                 <span className="group-hover/btn:translate-x-1 transition-transform">→</span>
               </button>
             </div>
@@ -214,10 +207,9 @@ export default function CertificateSection() {
         ))}
       </div>
 
-      {/* Popup */}
       <AnimatePresence>
         {selectedItem && (
-          <CertificatePopup item={selectedItem} onClose={closePopup} />
+          <CertificatePopup item={selectedItem} onClose={() => setSelectedItem(null)} />
         )}
       </AnimatePresence>
     </section>

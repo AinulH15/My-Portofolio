@@ -1,87 +1,30 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Inter:wght@300;400;500;600;700&family=Caveat:wght@400;600&family=Space+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  html {
-    scroll-behavior: smooth;
-  }
-  
-  body {
-    background-color: #FAF6F0;
-    color: #251B37;
-  }
+* {
+  font-family: 'Space Mono', monospace;
 }
 
-/* Custom scrollbar */
+html {
+  scroll-behavior: smooth;
+}
+
 ::-webkit-scrollbar {
   width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #FAF6F0;
+  background: #FFF8E7;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #FFCACA;
+  background: #E99B9B;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #E8B0B0;
-}
-
-/* Hanging thread line animation */
-.thread-line {
-  stroke-dasharray: 1000;
-  stroke-dashoffset: 1000;
-  animation: drawThread 1.5s ease-in-out forwards;
-}
-
-@keyframes drawThread {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
-/* Paper clip style */
-.paper-clip {
-  position: relative;
-}
-
-.paper-clip::before {
-  content: '📎';
-  position: absolute;
-  top: -12px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-/* Pin style */
-.pin {
-  position: relative;
-}
-
-.pin::before {
-  content: '📍';
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 14px;
-}
-
-/* Hanging card base */
-.hanging-card {
-  @apply bg-white rounded-xl shadow-lg border border-softPink/20;
-  box-shadow: 0 4px 20px rgba(37, 27, 55, 0.08);
-  transition: all 0.3s ease;
-}
-
-.hanging-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 30px rgba(37, 27, 55, 0.12);
+  background: #d48484;
 }

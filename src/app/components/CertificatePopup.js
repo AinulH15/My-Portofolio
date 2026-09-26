@@ -5,7 +5,7 @@ import { useEffect } from 'react'
 import { useLanguage } from '@/context/LanguageContext'
 
 export default function CertificatePopup({ item, onClose }) {
-  const { language } = useLanguage()
+  const { t } = useLanguage()
   const isCertificate = item.type === 'certificate'
 
   useEffect(() => {
@@ -39,9 +39,7 @@ export default function CertificatePopup({ item, onClose }) {
               <h2 className="text-lg md:text-xl font-black text-white font-mono-pixel">{item.title}</h2>
             </div>
             <p className="text-white/80 mt-1 font-mono-pixel text-[10px] md:text-xs font-bold">
-              {isCertificate 
-                ? (language === 'en' ? 'Certificate' : 'Sertifikat') 
-                : (language === 'en' ? 'Achievement' : 'Pencapaian')} | {item.year}
+              {isCertificate ? t.certificates.certificate : t.certificates.achievement} | {item.year}
             </p>
           </div>
           <button onClick={onClose} className="text-white hover:text-[#1A1A1D] text-xl md:text-2xl transition-colors">✕</button>
@@ -50,40 +48,32 @@ export default function CertificatePopup({ item, onClose }) {
         {/* BODY */}
         <div className="p-4 md:p-5 max-h-[calc(90vh-130px)] overflow-y-auto">
           <div className="mb-5 bg-[#F5F0E8] rounded-xl overflow-hidden flex items-center justify-center p-4 border border-[#EDE5D8]">
-            <img
-              src={item.image}
-              alt={item.title}
-              className="w-full h-auto max-h-[400px] object-contain rounded-lg"
-            />
+            <img src={item.image} alt={item.title} className="w-full h-auto max-h-[400px] object-contain rounded-lg" />
           </div>
 
           {item.description && (
             <div className="mb-5">
               <h3 className="text-sm md:text-base font-black text-[#1A1A1D] mb-2 flex items-center gap-2 font-mono-pixel">
                 <span className="w-1 h-3 md:h-4 bg-[#FF9AA2] rounded-full"></span>
-                {language === 'en' ? 'DESCRIPTION' : 'DESKRIPSI'}
+                {t.certificates.descriptionLabel}
               </h3>
-              <p className="text-[#4A4A4A] text-xs md:text-sm leading-relaxed font-mono-pixel">
-                {item.description}
-              </p>
+              <p className="text-[#4A4A4A] text-xs md:text-sm leading-relaxed font-mono-pixel">{item.description}</p>
             </div>
           )}
 
           <div className="mb-5">
             <h3 className="text-sm md:text-base font-black text-[#1A1A1D] mb-2 flex items-center gap-2 font-mono-pixel">
               <span className="w-1 h-3 md:h-4 bg-[#FF9AA2] rounded-full"></span>
-              {isCertificate 
-                ? (language === 'en' ? 'CERTIFICATE DETAILS' : 'DETAIL SERTIFIKAT') 
-                : (language === 'en' ? 'ACHIEVEMENT DETAILS' : 'DETAIL PENCAPAIAN')}
+              {isCertificate ? t.certificates.certDetails : t.certificates.achDetails}
             </h3>
             <div className="space-y-1.5 text-xs font-mono-pixel">
-              <p><span className="font-bold text-[#8B7355]">{isCertificate ? 'Provider:' : 'Organization:'}</span> {item.issuer || item.organization}</p>
-              {item.program && <p><span className="font-bold text-[#8B7355]">Program:</span> {item.program}</p>}
-              {item.period && <p><span className="font-bold text-[#8B7355]">Period:</span> {item.period}</p>}
-              {item.date && <p><span className="font-bold text-[#8B7355]">Date:</span> {item.date}</p>}
-              <p><span className="font-bold text-[#8B7355]">Year:</span> {item.year}</p>
-              {item.category && <p><span className="font-bold text-[#8B7355]">Category:</span> {item.category}</p>}
-              {item.credential && <p><span className="font-bold text-[#8B7355]">Credential:</span> {item.credential}</p>}
+              <p><span className="font-bold text-[#8B7355]">{isCertificate ? t.certificates.provider : t.certificates.organization}</span> {item.issuer || item.organization}</p>
+              {item.program && <p><span className="font-bold text-[#8B7355]">{t.certificates.program}</span> {item.program}</p>}
+              {item.period && <p><span className="font-bold text-[#8B7355]">{t.certificates.period}</span> {item.period}</p>}
+              {item.date && <p><span className="font-bold text-[#8B7355]">{t.certificates.date}</span> {item.date}</p>}
+              <p><span className="font-bold text-[#8B7355]">{t.certificates.year}</span> {item.year}</p>
+              {item.category && <p><span className="font-bold text-[#8B7355]">{t.certificates.category}</span> {item.category}</p>}
+              {item.credential && <p><span className="font-bold text-[#8B7355]">{t.certificates.credential}</span> {item.credential}</p>}
             </div>
           </div>
 
@@ -91,9 +81,7 @@ export default function CertificatePopup({ item, onClose }) {
             <div className="mb-5">
               <h3 className="text-sm md:text-base font-black text-[#1A1A1D] mb-2 flex items-center gap-2 font-mono-pixel">
                 <span className="w-1 h-3 md:h-4 bg-[#FF9AA2] rounded-full"></span>
-                {isCertificate 
-                  ? (language === 'en' ? 'WHAT I LEARNED' : 'YANG SAYA PELAJARI') 
-                  : (language === 'en' ? 'SKILLS DEMONSTRATED' : 'KETERAMPILAN')}
+                {isCertificate ? t.certificates.whatLearned : t.certificates.skillsDemonstrated}
               </h3>
               <div className="flex flex-wrap gap-1.5">
                 {item.skills.map((skill, idx) => (
@@ -110,9 +98,7 @@ export default function CertificatePopup({ item, onClose }) {
         <div className="p-3 rounded-b-xl flex justify-between items-center" style={{ backgroundColor: '#E2F0CB', borderTop: '2px solid #FF9AA2' }}>
           <div className="flex items-center gap-2">
             <span className="text-sm">🐱</span>
-            <span className="text-[9px] font-mono-pixel animate-pulse" style={{ color: '#B5EAD7' }}>
-              {language === 'en' ? '~ meow ~' : '~ meong ~'}
-            </span>
+            <span className="text-[9px] font-mono-pixel animate-pulse" style={{ color: '#B5EAD7' }}>{t.skills.meow}</span>
           </div>
           <div className="flex gap-1">
             <span className="text-xs">🐾</span>
