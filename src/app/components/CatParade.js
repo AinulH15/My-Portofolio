@@ -3,54 +3,72 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
-// Komponen kucing SVG horizontal yang berjalan
-const WalkingCat = ({ cat, index, totalCats, onClick, isActive, onAnimationComplete }) => {
+// Warna Pastel Cantik & Konsisten
+const COLORS = {
+  pink: '#FF9AA2',
+  softPink: '#FFB7B2',
+  peach: '#FFDAC1',
+  mint: '#E2F0CB',
+  sage: '#B5EAD7',
+  lavender: '#C7CEEA',
+  dark: '#2C2C2C'
+}
+
+// Komponen kucing SVG horizontal yang berjalan (Gaya Chibi Gemoy)
+const WalkingCat = ({ cat, index, totalCats, onClick, isActive }) => {
   const [blink, setBlink] = useState(false)
-  const [walkCycle, setWalkCycle] = useState(0)
-  const [tailAngle, setTailAngle] = useState(0)
-  const [lookDown, setLookDown] = useState(false)
+  const [eyeX, setEyeX] = useState(0)
+  const [eyeY, setEyeY] = useState(0)
   const [showDialog, setShowDialog] = useState(false)
+  const catRef = useRef(null)
   const audioRef = useRef(null)
 
-  // Warna kucing
+  // Skema Warna Kucing Gemoy
   const catColors = {
-    orange: { body: '#F5A623', dark: '#D4891A', light: '#F7B84D', ear: '#E8921A' },
-    pink: { body: '#E99B9B', dark: '#D48484', light: '#F0B8B8', ear: '#D48484' },
-    blue: { body: '#6BA3C7', dark: '#4A7A9B', light: '#8BBBD9', ear: '#4A7A9B' },
-    green: { body: '#7CB342', dark: '#5A7D2E', light: '#9BC75A', ear: '#5A7D2E' },
-    purple: { body: '#9B59B6', dark: '#7D3C98', light: '#B87DCC', ear: '#7D3C98' },
-    yellow: { body: '#F1C40F', dark: '#D4A30A', light: '#F4D45A', ear: '#D4A30A' },
-    leader: { body: '#E99B9B', dark: '#D48484', light: '#F0B8B8', ear: '#D48484' }
+    leader: { body: COLORS.lavender, dark: '#8B97C6', light: '#EEF0FB', ear: '#9CA6D6' },
+    frontend: { body: COLORS.pink, dark: '#E5858E', light: '#FFE4E8', ear: '#FF8DA1' },
+    backend: { body: COLORS.softPink, dark: '#E5A39E', light: '#FFF0E5', ear: '#FFA97A' },
+    database: { body: COLORS.sage, dark: '#73B8A0', light: '#E8F8F3', ear: '#84CAAF' },
+    tools: { body: COLORS.mint, dark: '#9FCCB0', light: '#E8F8F3', ear: '#B3D385' },
+    uiux: { body: COLORS.peach, dark: '#E2A27A', light: '#FFF0E5', ear: '#FFDAC1' },
+    orange: { body: '#FFDAC1', dark: '#E2A27A', light: '#FFF0E5', ear: '#FFDAC1' }
   }
 
-  const colors = cat.isLeader ? catColors.leader : catColors[cat.color]
+  const colors = cat.isLeader ? catColors.leader : (catColors[cat.color] || catColors.frontend)
 
   useEffect(() => {
     audioRef.current = new Audio('/asset/sounds/meow.mp3')
     audioRef.current.volume = 0.2
   }, [])
 
-  // Animasi jalan (kaki)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setWalkCycle(prev => (prev + 1) % 4)
-      setTailAngle(prev => Math.sin(Date.now() / 250) * 20)
-    }, 120)
-    return () => clearInterval(interval)
-  }, [])
-
-  // Random blink
+  // Random blink effect
   useEffect(() => {
     const interval = setInterval(() => {
       setBlink(true)
-      setTimeout(() => setBlink(false), 100)
-    }, 2800 + Math.random() * 1500)
+      setTimeout(() => setBlink(false), 120)
+    }, 3000 + Math.random() * 2000)
     return () => clearInterval(interval)
   }, [])
 
+  // Mouse follow eyes
   useEffect(() => {
-    setLookDown(isActive)
-  }, [isActive])
+    const handleMouseMove = (e) => {
+      if (!catRef.current) return
+      const rect = catRef.current.getBoundingClientRect()
+      const catX = rect.left + rect.width / 2
+      const catY = rect.top + rect.height / 2
+      const deltaX = (e.clientX - catX) / 40
+      const deltaY = (e.clientY - catY) / 40
+      setEyeX(Math.max(-2, Math.min(2, deltaX)))
+      setEyeY(Math.max(-1.5, Math.min(1.5, deltaY)))
+    }
+    
+    const isTouchDevice = 'ontouchstart' in window
+    if (!isTouchDevice) {
+      window.addEventListener('mousemove', handleMouseMove)
+      return () => window.removeEventListener('mousemove', handleMouseMove)
+    }
+  }, [])
 
   const handleClick = () => {
     if (audioRef.current) {
@@ -72,97 +90,118 @@ const WalkingCat = ({ cat, index, totalCats, onClick, isActive, onAnimationCompl
     if (onClick) onClick(null)
   }
 
-  const legOffset = walkCycle < 2 ? 3 : -3
-
   return (
-    <div className="relative inline-block cursor-pointer group" onClick={handleClick}>
-      {/* SVG KUCING - bentuk horizontal */}
+    <div ref={catRef} className="relative inline-block cursor-pointer group" onClick={handleClick}>
+      {/* SVG KUCING - Bentuk Chibi Gemoy & Animasi Naik Turun */}
       <motion.div
-        animate={{ y: [0, -2, 0, -1, 0] }}
-        transition={{ duration: 0.4, repeat: Infinity }}
+        animate={{ y: [0, -6, 0] }}
+        transition={{ duration: 0.5, repeat: Infinity, ease: 'easeInOut' }}
       >
-        <svg width="130" height="100" viewBox="0 0 200 130" className="drop-shadow-md hover:scale-105 transition-transform">
-          {/* EKOR (bergoyang) */}
-          <g transform={`rotate(${tailAngle}, 175, 50)`}>
-            <path d="M175 50 Q195 35 190 20 Q187 12 180 15" stroke={colors.dark} strokeWidth="6" fill="none" strokeLinecap="round"/>
-            <circle cx="180" cy="15" r="5" fill={colors.body} stroke={colors.dark} strokeWidth="2"/>
-          </g>
+        <svg width="130" height="110" viewBox="0 0 160 130" className="drop-shadow-md hover:scale-105 transition-transform">
+          {/* EKOR BERGOYANG */}
+          <motion.path 
+            d="M 130 65 Q 155 55 150 35 Q 145 20 135 25" 
+            stroke={colors.dark} 
+            strokeWidth="7" 
+            fill="none" 
+            strokeLinecap="round"
+            animate={{ rotate: [-10, 15, -10] }}
+            transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ transformOrigin: '130px 65px' }}
+          />
           
           {/* KAKI BELAKANG */}
-          <g transform={`translate(${walkCycle < 2 ? 0 : legOffset}, ${walkCycle < 2 ? -2 : 2})`}>
-            <rect x="130" y="100" width="18" height="16" rx="7" fill={colors.body} stroke={colors.dark} strokeWidth="2"/>
-            <rect x="138" y="112" width="10" height="7" rx="4" fill={colors.dark}/>
-          </g>
+          <motion.g
+            animate={{ rotate: [15, -15, 15] }}
+            transition={{ duration: 0.5, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ transformOrigin: '110px 85px' }}
+          >
+            <rect x="100" y="80" width="14" height="26" rx="7" fill={colors.dark}/>
+          </motion.g>
+          <motion.g
+            animate={{ rotate: [-15, 15, -15] }}
+            transition={{ duration: 0.5, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ transformOrigin: '95px 85px' }}
+          >
+            <rect x="90" y="80" width="14" height="26" rx="7" fill={colors.body} stroke={colors.dark} strokeWidth="2.5"/>
+          </motion.g>
           
-          <g transform={`translate(${walkCycle >= 2 ? 0 : -legOffset}, ${walkCycle >= 2 ? -2 : 2})`}>
-            <rect x="112" y="100" width="18" height="16" rx="7" fill={colors.body} stroke={colors.dark} strokeWidth="2"/>
-            <rect x="120" y="112" width="10" height="7" rx="4" fill={colors.dark}/>
-          </g>
-          
-          {/* BADAN */}
-          <rect x="65" y="65" width="95" height="48" rx="12" fill={colors.body} stroke={colors.dark} strokeWidth="3"/>
-          <rect x="78" y="75" width="68" height="28" rx="8" fill={colors.light} stroke={colors.dark} strokeWidth="1.5"/>
+          {/* BADAN UTAMA */}
+          <rect x="40" y="45" width="90" height="48" rx="24" fill={colors.body} stroke={colors.dark} strokeWidth="3"/>
+          <rect x="55" y="55" width="60" height="28" rx="14" fill={colors.light} opacity="0.8"/>
           
           {/* TULISAN DI BADAN */}
-          <text x="112" y="95" textAnchor="middle" fontSize="13" fontWeight="bold" fill="#2C2C2C" fontFamily="'Space Mono', monospace">
+          <text x="85" y="72" textAnchor="middle" fontSize={cat.isLeader ? "11" : "10"} fontWeight="900" fill={colors.dark} fontFamily="'Space Mono', monospace">
             {cat.isLeader ? '✦ SKILL ✦' : cat.name}
           </text>
           
           {/* KAKI DEPAN */}
-          <g transform={`translate(${walkCycle < 2 ? legOffset : 0}, ${walkCycle < 2 ? 2 : -2})`}>
-            <rect x="70" y="100" width="16" height="15" rx="7" fill={colors.body} stroke={colors.dark} strokeWidth="2"/>
-            <rect x="77" y="111" width="9" height="6" rx="4" fill={colors.dark}/>
-          </g>
-          
-          <g transform={`translate(${walkCycle >= 2 ? -legOffset : 0}, ${walkCycle >= 2 ? 2 : -2})`}>
-            <rect x="52" y="100" width="16" height="15" rx="7" fill={colors.body} stroke={colors.dark} strokeWidth="2"/>
-            <rect x="59" y="111" width="9" height="6" rx="4" fill={colors.dark}/>
-          </g>
+          <motion.g
+            animate={{ rotate: [-15, 15, -15] }}
+            transition={{ duration: 0.5, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ transformOrigin: '55px 85px' }}
+          >
+            <rect x="48" y="80" width="14" height="26" rx="7" fill={colors.dark}/>
+          </motion.g>
+          <motion.g
+            animate={{ rotate: [15, -15, 15] }}
+            transition={{ duration: 0.5, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ transformOrigin: '70px 85px' }}
+          >
+            <rect x="63" y="80" width="14" height="26" rx="7" fill={colors.body} stroke={colors.dark} strokeWidth="2.5"/>
+          </motion.g>
           
           {/* KEPALA */}
-          <circle cx="55" cy="62" r="28" fill={colors.body} stroke={colors.dark} strokeWidth="3"/>
+          <circle cx="42" cy="48" r="26" fill={colors.body} stroke={colors.dark} strokeWidth="3"/>
           
           {/* TELINGA */}
-          <polygon points="32,44 22,22 45,35" fill={colors.body} stroke={colors.dark} strokeWidth="3" strokeLinejoin="round"/>
-          <polygon points="34,42 28,29 42,37" fill={colors.ear} stroke={colors.dark} strokeWidth="1.5"/>
-          <polygon points="72,44 85,27 78,40" fill={colors.body} stroke={colors.dark} strokeWidth="3" strokeLinejoin="round"/>
-          <polygon points="73,43 82,32 77,39" fill={colors.ear} stroke={colors.dark} strokeWidth="1.5"/>
+          <path d="M 22 34 L 16 12 L 34 26 Z" fill={colors.body} stroke={colors.dark} strokeWidth="2.5" strokeLinejoin="round"/>
+          <path d="M 23 31 L 18 16 L 32 25 Z" fill={colors.ear}/>
+          <path d="M 50 26 L 64 12 L 58 34 Z" fill={colors.body} stroke={colors.dark} strokeWidth="2.5" strokeLinejoin="round"/>
+          <path d="M 52 25 L 62 16 L 57 31 Z" fill={colors.ear}/>
           
-          {/* MATA (melihat ke popup jika aktif) */}
-          <g transform="translate(42, 56)">
-            <circle cx="0" cy="0" r="6.5" fill="white" stroke={colors.dark} strokeWidth="2"/>
-            <circle cx={lookDown ? 0 : 2} cy={lookDown ? 4 : 0} r="3" fill="#2C2C2C"/>
-            <circle cx={lookDown ? 1 : 3} cy={lookDown ? 3 : -1} r="1" fill="white"/>
-          </g>
-          <g transform="translate(67, 56)">
-            <circle cx="0" cy="0" r="6.5" fill="white" stroke={colors.dark} strokeWidth="2"/>
-            <circle cx={lookDown ? 0 : 2} cy={lookDown ? 4 : 0} r="3" fill="#2C2C2C"/>
-            <circle cx={lookDown ? 1 : 3} cy={lookDown ? 3 : -1} r="1" fill="white"/>
-          </g>
-          
-          {/* BLINK */}
-          {blink && (
+          {/* MATA */}
+          {!blink ? (
             <>
-              <rect x="35" y="54" width="14" height="4" rx="2" fill={colors.body} stroke={colors.dark} strokeWidth="1.5"/>
-              <rect x="60" y="54" width="14" height="4" rx="2" fill={colors.body} stroke={colors.dark} strokeWidth="1.5"/>
+              <g transform="translate(31, 46)">
+                <circle cx="0" cy="0" r="5" fill="white" stroke={colors.dark} strokeWidth="1.5"/>
+                <circle cx={eyeX} cy={eyeY} r="2.2" fill={COLORS.dark}/>
+                <circle cx={eyeX + 0.8} cy={eyeY - 0.8} r="0.8" fill="white"/>
+              </g>
+              <g transform="translate(49, 46)">
+                <circle cx="0" cy="0" r="5" fill="white" stroke={colors.dark} strokeWidth="1.5"/>
+                <circle cx={eyeX} cy={eyeY} r="2.2" fill={COLORS.dark}/>
+                <circle cx={eyeX + 0.8} cy={eyeY - 0.8} r="0.8" fill="white"/>
+              </g>
+            </>
+          ) : (
+            <>
+              <path d="M 26 46 Q 31 50 36 46" stroke={colors.dark} strokeWidth="2" fill="none" strokeLinecap="round"/>
+              <path d="M 44 46 Q 49 50 54 46" stroke={colors.dark} strokeWidth="2" fill="none" strokeLinecap="round"/>
             </>
           )}
           
           {/* HIDUNG & MULUT */}
-          <polygon points="54,69 56,72 52,72" fill="#E99B9B" stroke={colors.dark} strokeWidth="1"/>
-          <path d="M54 72 Q54 77 50 77" stroke={colors.dark} strokeWidth="1.5" fill="none"/>
-          <path d="M54 72 Q54 77 58 77" stroke={colors.dark} strokeWidth="1.5" fill="none"/>
+          <polygon points="39,52 43,52 41,55" fill="#FF8DA1" stroke={colors.dark} strokeWidth="0.8"/>
+          <path d="M 38 56 Q 41 59 41 56 Q 41 59 44 56" stroke={colors.dark} strokeWidth="1.5" fill="none" strokeLinecap="round"/>
           
           {/* KUMIS */}
-          <line x1="30" y1="65" x2="15" y2="62" stroke={colors.dark} strokeWidth="1.5"/>
-          <line x1="30" y1="69" x2="13" y2="69" stroke={colors.dark} strokeWidth="1.5"/>
-          <line x1="78" y1="65" x2="93" y2="62" stroke={colors.dark} strokeWidth="1.5"/>
-          <line x1="78" y1="69" x2="95" y2="69" stroke={colors.dark} strokeWidth="1.5"/>
+          <line x1="20" y1="48" x2="8" y2="45" stroke={colors.dark} strokeWidth="1.5" strokeLinecap="round"/>
+          <line x1="20" y1="53" x2="7" y2="54" stroke={colors.dark} strokeWidth="1.5" strokeLinecap="round"/>
+          <line x1="62" y1="48" x2="74" y2="45" stroke={colors.dark} strokeWidth="1.5" strokeLinecap="round"/>
+          <line x1="62" y1="53" x2="75" y2="54" stroke={colors.dark} strokeWidth="1.5" strokeLinecap="round"/>
           
-          {/* BLUSH */}
-          <circle cx="36" cy="69" r="3.5" fill="#E99B9B" opacity="0.35"/>
-          <circle cx="72" cy="69" r="3.5" fill="#E99B9B" opacity="0.35"/>
+          {/* BLUSH PIPI */}
+          <circle cx="26" cy="53" r="4" fill="#FF8DA1" opacity="0.6"/>
+          <circle cx="56" cy="53" r="4" fill="#FF8DA1" opacity="0.6"/>
         </svg>
+
+        {/* BAYANGAN DI BAWAH */}
+        <motion.div
+          className="w-24 h-2.5 bg-black/15 rounded-full mx-auto -mt-3 blur-[2px]"
+          animate={{ scale: [0.85, 1.15, 0.85] }}
+          transition={{ duration: 0.5, repeat: Infinity, ease: 'easeInOut' }}
+        />
       </motion.div>
       
       {/* POPUP DIALOG */}
@@ -172,18 +211,18 @@ const WalkingCat = ({ cat, index, totalCats, onClick, isActive, onAnimationCompl
             initial={{ opacity: 0, scale: 0.8, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 10 }}
-            className="absolute left-1/2 transform -translate-x-1/2 top-28 w-64 bg-white border-4 border-[#E99B9B] rounded-2xl shadow-[8px_8px_0_0_#E99B9B] z-30"
+            className="absolute left-1/2 transform -translate-x-1/2 top-28 w-64 bg-white border-4 border-[#FF9AA2] rounded-2xl shadow-[8px_8px_0_0_#FF9AA2] z-30"
           >
-            <div className="absolute -top-2 left-3 w-4 h-3 bg-[#E99B9B] border-2 border-black rounded-t-full"></div>
-            <div className="absolute -top-2 right-3 w-4 h-3 bg-[#E99B9B] border-2 border-black rounded-t-full"></div>
+            <div className="absolute -top-2 left-3 w-4 h-3 bg-[#FF9AA2] border-2 border-black rounded-t-full"></div>
+            <div className="absolute -top-2 right-3 w-4 h-3 bg-[#FF9AA2] border-2 border-black rounded-t-full"></div>
             
-            <div className="bg-[#E99B9B] p-3 rounded-t-xl">
+            <div className="bg-[#FF9AA2] p-3 rounded-t-xl">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="text-lg">🐱</span>
                   <h4 className="text-sm font-black text-white font-mono-pixel">{cat.name} Skills</h4>
                 </div>
-                <button onClick={closeDialog} className="text-white text-lg">✕</button>
+                <button onClick={closeDialog} className="text-white text-lg font-bold">✕</button>
               </div>
             </div>
             
@@ -192,7 +231,7 @@ const WalkingCat = ({ cat, index, totalCats, onClick, isActive, onAnimationCompl
                 <p className="text-[10px] font-black text-[#8B7355] mb-2 font-mono-pixel">✦ SKILLS</p>
                 <div className="space-y-1">
                   {cat.skills.map((skill, idx) => (
-                    <div key={idx} className="flex items-center gap-2 text-xs font-mono-pixel"><span className="text-[#E99B9B]">-</span><span>{skill}</span></div>
+                    <div key={idx} className="flex items-center gap-2 text-xs font-mono-pixel"><span className="text-[#FF9AA2]">-</span><span>{skill}</span></div>
                   ))}
                 </div>
               </div>
@@ -200,14 +239,14 @@ const WalkingCat = ({ cat, index, totalCats, onClick, isActive, onAnimationCompl
                 <p className="text-[10px] font-black text-[#8B7355] mb-2 font-mono-pixel">✦ PROJECTS</p>
                 <div className="space-y-1">
                   {cat.projects.map((project, idx) => (
-                    <div key={idx} className="flex items-center gap-2 text-xs font-mono-pixel"><span className="text-[#E99B9B]">•</span><span>{project}</span></div>
+                    <div key={idx} className="flex items-center gap-2 text-xs font-mono-pixel"><span className="text-[#FF9AA2]">•</span><span>{project}</span></div>
                   ))}
                 </div>
               </div>
               <p className="text-[#4A4A4A] text-xs leading-relaxed font-mono-pixel border-t border-[#F0E8DC] pt-3">{cat.description}</p>
             </div>
             
-            <div className="bg-[#F5F0E8] p-2 rounded-b-xl border-t border-[#E99B9B] flex justify-between">
+            <div className="bg-[#FFF8E7] p-2 rounded-b-xl border-t border-[#FF9AA2] flex justify-between">
               <span className="text-[8px] text-[#8B7355] font-mono-pixel">~ meow ~</span>
               <span className="text-xs">🐾</span>
             </div>
@@ -217,7 +256,7 @@ const WalkingCat = ({ cat, index, totalCats, onClick, isActive, onAnimationCompl
       
       {/* Click me indicator */}
       {index === 0 && !showDialog && (
-        <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white border-2 border-[#E99B9B] rounded-full px-2 py-0.5 shadow-md animate-bounce whitespace-nowrap">
+        <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white border-2 border-[#FF9AA2] rounded-full px-2 py-0.5 shadow-md animate-bounce whitespace-nowrap">
           <p className="text-[7px] text-[#2C2C2C] font-mono-pixel">✨ click me! ✨</p>
         </div>
       )}
@@ -253,7 +292,6 @@ const paradeCats = [
 export default function CatParade() {
   const [isVisible, setIsVisible] = useState(false)
   const [activeCat, setActiveCat] = useState(null)
-  const [scrollPosition, setScrollPosition] = useState(0)
   const sectionRef = useRef(null)
   const containerRef = useRef(null)
 
@@ -279,16 +317,19 @@ export default function CatParade() {
     const speed = 0.8 // pixels per frame
     
     const animate = () => {
-      position = (position + speed) % (paradeCats.length * 150)
-      if (containerRef.current) {
-        containerRef.current.style.transform = `translateX(${-position}px)`
+      // Jeda pergerakan jika ada kucing yang diklik/aktif
+      if (!activeCat) {
+        position = (position + speed) % (paradeCats.length * 160)
+        if (containerRef.current) {
+          containerRef.current.style.transform = `translateX(${-position}px)`
+        }
       }
       animationId = requestAnimationFrame(animate)
     }
     
     animationId = requestAnimationFrame(animate)
     return () => cancelAnimationFrame(animationId)
-  }, [isVisible])
+  }, [isVisible, activeCat])
 
   return (
     <section id="skills" ref={sectionRef} className="py-16 md:py-24 bg-[#FFF8E7] overflow-hidden">
@@ -297,9 +338,9 @@ export default function CatParade() {
         {/* Title */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2">
-            <div className="w-12 h-px bg-[#E99B9B]"></div>
-            <span className="text-[#E99B9B] text-xs font-mono-pixel">✦ MEET MY CATS ✦</span>
-            <div className="w-12 h-px bg-[#E99B9B]"></div>
+            <div className="w-12 h-px bg-[#FF9AA2]"></div>
+            <span className="text-[#FF9AA2] text-xs font-mono-pixel">✦ MEET MY CATS ✦</span>
+            <div className="w-12 h-px bg-[#FF9AA2]"></div>
           </div>
           <p className="text-[#8B7355] text-xs font-mono-pixel mt-2 animate-pulse">→ scroll down to see them walk! ←</p>
         </div>
@@ -342,7 +383,7 @@ export default function CatParade() {
         {/* Placeholder */}
         {!isVisible && (
           <div className="flex flex-col items-center justify-center min-h-[300px] text-center">
-            <div className="bg-white/80 border-2 border-dashed border-[#E99B9B] rounded-2xl p-8">
+            <div className="bg-white/80 border-2 border-dashed border-[#FF9AA2] rounded-2xl p-8">
               <div className="text-5xl mb-3 animate-bounce">🐱</div>
               <p className="text-[#8B7355] text-xs font-mono-pixel">scroll down to meet my cats!</p>
               <p className="text-[#C4B4A4] text-[9px] mt-2 font-mono-pixel">(they are walking from right to left)</p>
@@ -354,7 +395,7 @@ export default function CatParade() {
         {isVisible && (
           <div className="text-center mt-6">
             <p className="text-[9px] text-[#8B7355] font-mono-pixel">✨ click any cat to see their skills! ✨</p>
-            <div className="flex justify-center gap-1 mt-2 text-[#E99B9B]">
+            <div className="flex justify-center gap-1 mt-2 text-[#FF9AA2]">
               <span>🐾</span> <span>🐾</span> <span>🐾</span>
             </div>
           </div>

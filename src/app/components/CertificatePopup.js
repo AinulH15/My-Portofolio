@@ -1,54 +1,102 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useLanguage } from '@/context/LanguageContext'
 
 export default function CertificatePopup({ item, onClose }) {
   const { t } = useLanguage()
   const isCertificate = item.type === 'certificate'
+  const popupRef = useRef(null)
 
+  // Support berbagai nama key untuk gambar (fleksibel)
+  const imageSrc = item.image || item.img || item.thumbnail || item.file || null
+
+  // Escape key + body scroll lock + focus trap sederhana
   useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === 'Escape') onClose()
     }
+    const prevOverflow = document.body.style.overflow
     document.addEventListener('keydown', handleEsc)
     document.body.style.overflow = 'hidden'
+
+    // Focus ke popup supaya keyboard navigation bekerja
+    popupRef.current?.focus()
+
     return () => {
       document.removeEventListener('keydown', handleEsc)
-      document.body.style.overflow = 'unset'
+      document.body.style.overflow = prevOverflow
     }
   }, [onClose])
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto" onClick={onClose}>
+    <div
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="certificate-popup-title"
+    >
       <motion.div
+        ref={popupRef}
+        tabIndex={-1}
         initial={{ opacity: 0, scale: 0.9, y: 30 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.9, y: 30 }}
         transition={{ duration: 0.25 }}
-        className="relative bg-white border-4 rounded-2xl shadow-2xl w-[95%] max-w-2xl max-h-[90vh] overflow-hidden"
+        className="relative bg-white border-4 rounded-2xl shadow-2xl w-[95%] max-w-2xl max-h-[90vh] flex flex-col overflow-hidden focus:outline-none"
         style={{ borderColor: '#FF9AA2' }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* HEADER */}
-        <div className="p-4 md:p-5 rounded-t-xl flex justify-between items-start" style={{ backgroundColor: '#FF9AA2' }}>
-          <div>
+        {/* HEADER (shrink-0 agar tidak ikut scroll) */}
+        <div
+          className="shrink-0 p-4 md:p-5 rounded-t-xl flex justify-between items-start gap-3"
+          style={{ backgroundColor: '#FF9AA2' }}
+        >
+          <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <span className="text-xl">{isCertificate ? '📜' : '🏆'}</span>
-              <h2 className="text-lg md:text-xl font-black text-white font-mono-pixel">{item.title}</h2>
+              <span className="text-xl shrink-0">{isCertificate ? '📜' : '🏆'}</span>
+              <h2
+                id="certificate-popup-title"
+                className="text-lg md:text-xl font-black text-white font-mono-pixel break-words"
+              >
+                {item.title}
+              </h2>
             </div>
             <p className="text-white/80 mt-1 font-mono-pixel text-[10px] md:text-xs font-bold">
               {isCertificate ? t.certificates.certificate : t.certificates.achievement} | {item.year}
             </p>
           </div>
-          <button onClick={onClose} className="text-white hover:text-[#1A1A1D] text-xl md:text-2xl transition-colors">✕</button>
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            className="shrink-0 text-white hover:text-[#1A1A1D] text-xl md:text-2xl transition-colors"
+          >
+            ✕
+          </button>
         </div>
 
-        {/* BODY */}
-        <div className="p-4 md:p-5 max-h-[calc(90vh-130px)] overflow-y-auto">
-          <div className="mb-5 bg-[#F5F0E8] rounded-xl overflow-hidden flex items-center justify-center p-4 border border-[#EDE5D8]">
-            <img src={item.image} alt={item.title} className="w-full h-auto max-h-[400px] object-contain rounded-lg" />
+        {/* BODY (flex-1 + overflow-y-auto = scroll hanya di body) */}
+        <div className="flex-1 overflow-y-auto p-4 md:p-5">
+          {/* Preview gambar */}
+          <div className="mb-5 bg-[#F5F0E8] rounded-xl overflow-hidden flex items-center justify-center p-4 border border-[#EDE5D8] min-h-[120px]">
+            {imageSrc ? (
+              <img
+                src={imageSrc}
+                alt={item.title}
+                className="w-full h-auto max-h-[400px] object-contain rounded-lg"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none'
+                  e.currentTarget.parentElement?.classList.add('!min-h-[160px]')
+                }}
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center text-[#8B7355] py-8">
+                <span className="text-5xl mb-2">{isCertificate ? '📜' : '🏆'}</span>
+                <span className="text-[10px] font-mono-pixel">Preview tidak tersedia</span>
+              </div>
+            )}
           </div>
 
           {item.description && (
@@ -57,7 +105,9 @@ export default function CertificatePopup({ item, onClose }) {
                 <span className="w-1 h-3 md:h-4 bg-[#FF9AA2] rounded-full"></span>
                 {t.certificates.descriptionLabel}
               </h3>
-              <p className="text-[#4A4A4A] text-xs md:text-sm leading-relaxed font-mono-pixel">{item.description}</p>
+              <p className="text-[#4A4A4A] text-xs md:text-sm leading-relaxed font-mono-pixel">
+                {item.description}
+              </p>
             </div>
           )}
 
@@ -67,25 +117,65 @@ export default function CertificatePopup({ item, onClose }) {
               {isCertificate ? t.certificates.certDetails : t.certificates.achDetails}
             </h3>
             <div className="space-y-1.5 text-xs font-mono-pixel">
-              <p><span className="font-bold text-[#8B7355]">{isCertificate ? t.certificates.provider : t.certificates.organization}</span> {item.issuer || item.organization}</p>
-              {item.program && <p><span className="font-bold text-[#8B7355]">{t.certificates.program}</span> {item.program}</p>}
-              {item.period && <p><span className="font-bold text-[#8B7355]">{t.certificates.period}</span> {item.period}</p>}
-              {item.date && <p><span className="font-bold text-[#8B7355]">{t.certificates.date}</span> {item.date}</p>}
-              <p><span className="font-bold text-[#8B7355]">{t.certificates.year}</span> {item.year}</p>
-              {item.category && <p><span className="font-bold text-[#8B7355]">{t.certificates.category}</span> {item.category}</p>}
-              {item.credential && <p><span className="font-bold text-[#8B7355]">{t.certificates.credential}</span> {item.credential}</p>}
+              {(item.issuer || item.organization) && (
+                <p>
+                  <span className="font-bold text-[#8B7355]">
+                    {isCertificate ? t.certificates.provider : t.certificates.organization}
+                  </span>{' '}
+                  {item.issuer || item.organization}
+                </p>
+              )}
+              {item.program && (
+                <p>
+                  <span className="font-bold text-[#8B7355]">{t.certificates.program}</span>{' '}
+                  {item.program}
+                </p>
+              )}
+              {item.period && (
+                <p>
+                  <span className="font-bold text-[#8B7355]">{t.certificates.period}</span>{' '}
+                  {item.period}
+                </p>
+              )}
+              {item.date && (
+                <p>
+                  <span className="font-bold text-[#8B7355]">{t.certificates.date}</span>{' '}
+                  {item.date}
+                </p>
+              )}
+              {item.year && (
+                <p>
+                  <span className="font-bold text-[#8B7355]">{t.certificates.year}</span>{' '}
+                  {item.year}
+                </p>
+              )}
+              {item.category && (
+                <p>
+                  <span className="font-bold text-[#8B7355]">{t.certificates.category}</span>{' '}
+                  {item.category}
+                </p>
+              )}
+              {item.credential && (
+                <p>
+                  <span className="font-bold text-[#8B7355]">{t.certificates.credential}</span>{' '}
+                  {item.credential}
+                </p>
+              )}
             </div>
           </div>
 
           {item.skills && item.skills.length > 0 && (
-            <div className="mb-5">
+            <div className="mb-2">
               <h3 className="text-sm md:text-base font-black text-[#1A1A1D] mb-2 flex items-center gap-2 font-mono-pixel">
                 <span className="w-1 h-3 md:h-4 bg-[#FF9AA2] rounded-full"></span>
                 {isCertificate ? t.certificates.whatLearned : t.certificates.skillsDemonstrated}
               </h3>
               <div className="flex flex-wrap gap-1.5">
                 {item.skills.map((skill, idx) => (
-                  <span key={idx} className="bg-[#F5F0E8] border border-[#E99B9B] px-2 py-0.5 md:px-3 md:py-1 rounded-full text-[9px] md:text-[10px] font-mono-pixel text-[#2C2C2C]">
+                  <span
+                    key={idx}
+                    className="bg-[#F5F0E8] border border-[#E99B9B] px-2 py-0.5 md:px-3 md:py-1 rounded-full text-[9px] md:text-[10px] font-mono-pixel text-[#2C2C2C]"
+                  >
                     {skill}
                   </span>
                 ))}
@@ -94,11 +184,19 @@ export default function CertificatePopup({ item, onClose }) {
           )}
         </div>
 
-        {/* FOOTER */}
-        <div className="p-3 rounded-b-xl flex justify-between items-center" style={{ backgroundColor: '#E2F0CB', borderTop: '2px solid #FF9AA2' }}>
+        {/* FOOTER (shrink-0) */}
+        <div
+          className="shrink-0 p-3 rounded-b-xl flex justify-between items-center"
+          style={{ backgroundColor: '#E2F0CB', borderTop: '2px solid #FF9AA2' }}
+        >
           <div className="flex items-center gap-2">
             <span className="text-sm">🐱</span>
-            <span className="text-[9px] font-mono-pixel animate-pulse" style={{ color: '#B5EAD7' }}>{t.skills.meow}</span>
+            <span
+              className="text-[9px] font-mono-pixel animate-pulse"
+              style={{ color: '#5A7A3A' }}
+            >
+              {t.skills.meow}
+            </span>
           </div>
           <div className="flex gap-1">
             <span className="text-xs">🐾</span>
