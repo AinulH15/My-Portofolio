@@ -26,7 +26,7 @@ const certificatesData = [
     date: '14 Juli 2023',
     year: '2023',
     category: 'Web Development',
-    image: '/asset/certificate/skilvull.jpg',
+    image: '/asset/certificate/Skilvul.jpg',
     description: 'Completed special challenge in beginner web development, demonstrating proficiency in HTML, CSS, and JavaScript fundamentals.',
     skills: ['HTML', 'CSS', 'JavaScript', 'Web Development'],
     type: 'certificate'
